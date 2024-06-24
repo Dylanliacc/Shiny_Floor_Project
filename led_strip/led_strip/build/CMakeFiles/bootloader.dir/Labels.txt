@@ -1,0 +1,13 @@
+# Target labels
+ bootloader
+# Source files and their labels
+/home/dylan/seeed_ws/shine_floor/led_strip/led_strip/build/CMakeFiles/bootloader
+/home/dylan/seeed_ws/shine_floor/led_strip/led_strip/build/CMakeFiles/bootloader.rule
+/home/dylan/seeed_ws/shine_floor/led_strip/led_strip/build/CMakeFiles/bootloader-complete.rule
+/home/dylan/seeed_ws/shine_floor/led_strip/led_strip/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
+/home/dylan/seeed_ws/shine_floor/led_strip/led_strip/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
+/home/dylan/seeed_ws/shine_floor/led_strip/led_strip/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
+/home/dylan/seeed_ws/shine_floor/led_strip/led_strip/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule
+/home/dylan/seeed_ws/shine_floor/led_strip/led_strip/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
+/home/dylan/seeed_ws/shine_floor/led_strip/led_strip/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
+/home/dylan/seeed_ws/shine_floor/led_strip/led_strip/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule

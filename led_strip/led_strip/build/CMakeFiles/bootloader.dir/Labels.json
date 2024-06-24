@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/dylan/seeed_ws/shine_floor/led_strip/led_strip/build/CMakeFiles/bootloader"
+		},
+		{
+			"file" : "/home/dylan/seeed_ws/shine_floor/led_strip/led_strip/build/CMakeFiles/bootloader.rule"
+		},
+		{
+			"file" : "/home/dylan/seeed_ws/shine_floor/led_strip/led_strip/build/CMakeFiles/bootloader-complete.rule"
+		},
+		{
+			"file" : "/home/dylan/seeed_ws/shine_floor/led_strip/led_strip/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule"
+		},
+		{
+			"file" : "/home/dylan/seeed_ws/shine_floor/led_strip/led_strip/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule"
+		},
+		{
+			"file" : "/home/dylan/seeed_ws/shine_floor/led_strip/led_strip/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule"
+		},
+		{
+			"file" : "/home/dylan/seeed_ws/shine_floor/led_strip/led_strip/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule"
+		},
+		{
+			"file" : "/home/dylan/seeed_ws/shine_floor/led_strip/led_strip/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule"
+		},
+		{
+			"file" : "/home/dylan/seeed_ws/shine_floor/led_strip/led_strip/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule"
+		},
+		{
+			"file" : "/home/dylan/seeed_ws/shine_floor/led_strip/led_strip/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"bootloader"
+		],
+		"name" : "bootloader"
+	}
+}
