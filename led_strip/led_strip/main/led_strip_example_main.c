@@ -11,10 +11,10 @@
 #include "led_strip_encoder.h"
 
 #define RMT_LED_STRIP_RESOLUTION_HZ 10000000 // 10MHz resolution, 1 tick = 0.1us (led strip needs a high resolution)
-#define RMT_LED_STRIP_GPIO_NUM      0
+#define RMT_LED_STRIP_GPIO_NUM      9
 
-#define EXAMPLE_LED_NUMBERS         24
-#define EXAMPLE_CHASE_SPEED_MS      10
+#define EXAMPLE_LED_NUMBERS         20
+#define EXAMPLE_CHASE_SPEED_MS      20
 
 static const char *TAG = "example";
 

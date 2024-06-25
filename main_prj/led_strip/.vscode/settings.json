@@ -1,0 +1,10 @@
+{
+  "C_Cpp.intelliSenseEngine": "default",
+  "files.associations": {
+    "led_strip_encoder.h": "c",
+    "task.h": "c",
+    "event_groups.h": "c"
+  },
+  "idf.flashType": "UART",
+  "idf.port": "/dev/ttyACM0"
+}
