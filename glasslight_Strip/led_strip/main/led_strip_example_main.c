@@ -14,7 +14,7 @@
 #define RMT_LED_STRIP_RESOLUTION_HZ 10000000 // 10MHz resolution, 1 tick = 0.1us (led strip needs a high resolution)
 #define RMT_LED_STRIP_GPIO_NUM      9
 
-#define EXAMPLE_LED_NUMBERS         8
+#define EXAMPLE_LED_NUMBERS         20
 #define EXAMPLE_CHASE_SPEED_MS      10
 
 #define WIFI_SSID      "IAG_2.4G"
@@ -22,7 +22,7 @@
 #define MAX_RETRY      5
 
 #define SERVER_IP      "192.168.66.69"
-#define SERVER_PORT    3333
+#define SERVER_PORT    3334
 
 static const char *TAG = "example";
 static int s_retry_num = 0;
