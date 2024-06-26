@@ -1,11 +1,5 @@
 {
   "C_Cpp.intelliSenseEngine": "default",
-  "files.associations": {
-    "led_strip_encoder.h": "c",
-    "task.h": "c",
-    "event_groups.h": "c",
-    "thread": "c"
-  },
   "idf.flashType": "UART",
   "idf.port": "/dev/ttyACM0",
   "idf.adapterTargetName": "esp32s3"
