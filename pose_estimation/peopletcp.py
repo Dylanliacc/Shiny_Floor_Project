@@ -7,6 +7,7 @@ import numpy as np
 import json
 from ultralytics import YOLO
 import socket
+
 # 初始化GStreamer
 Gst.init(None)
 
@@ -19,10 +20,9 @@ pipeline = Gst.parse_launch(
     "video/x-raw, format=(string)YUY2, width=640, height=480, framerate=30/1 ! "
     "videoconvert ! video/x-raw, format=(string)RGB ! appsink name=sink max-buffers=1 drop=true"
 )
-# 打开视频文件
+
 sink = pipeline.get_by_name('sink')
 sink.set_property("emit-signals", True)
-
 
 def new_sample(sink, data):
     sample = sink.emit("pull-sample")
@@ -51,37 +51,44 @@ def new_sample(sink, data):
 with open('regions.json', 'r') as f:
     all_region_points = json.load(f)
 
-keypoint_check = 16  #16
-
-
+keypoints_check = [15, 16]  # 左右脚关键点
+detection_radius = 10  # 设置检测半径
 
 # 设置TCP客户端
 TCP_IP = '127.0.0.1'  # TCP服务器的IP地址
-# TCP_PORT = 5005  # TCP服务器的端口
 TCP_PORT = 3333  # TCP服务器的端口
 BUFFER_SIZE = 1024  # 接收数据缓冲区大小
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect((TCP_IP, TCP_PORT))
 
-
 def plot_keypoint(keypoint_list, image):
     regions_status = [0] * len(all_region_points)
+    keypoint_positions = []
 
     for ind, k in enumerate(reversed(keypoint_list)):
         if len(k) != 0:
             k = k.cpu().numpy()
-            cv2.circle(image, (int(k[keypoint_check][0]), int(k[keypoint_check][1])), 3, (0, 255, 0), 2,
-                       lineType=cv2.LINE_AA)
+            for keypoint_check in keypoints_check:
+                keypoint_positions.append((int(k[keypoint_check][0]), int(k[keypoint_check][1])))
 
-            for idx, region_points in enumerate(all_region_points):
-                region_points = np.array(region_points, np.int32)
-                cv2.polylines(image, [region_points], True, (0, 255, 255), thickness=4)
-                if cv2.pointPolygonTest(region_points, (k[keypoint_check][0], k[keypoint_check][1]),
-                                        False) >= 0 or cv2.pointPolygonTest(region_points, (
-                k[keypoint_check - 1][0], k[keypoint_check - 1][1]), False) >= 0:
-                    cv2.polylines(image, [region_points], True, (0, 255, 0), thickness=4)
-                    regions_status[idx] = 1
+    for idx, region_points in enumerate(all_region_points):
+        region_points = np.array(region_points, np.int32)
+        cv2.polylines(image, [region_points], True, (0, 255, 255), thickness=4)
+
+        for pos in keypoint_positions:
+            # 绘制膨胀范围的圆形区域
+            cv2.circle(image, pos, detection_radius, (255, 0, 0), 2)  # 用蓝色绘制检测范围
+
+            # 检查膨胀关键点范围是否与多边形区域重叠
+            if cv2.pointPolygonTest(region_points, pos, False) >= 0 or \
+               any(cv2.pointPolygonTest(region_points, (pos[0] + dx, pos[1] + dy), False) >= 0 
+                   for dx in range(-detection_radius, detection_radius + 1) 
+                   for dy in range(-detection_radius, detection_radius + 1) 
+                   if dx*dx + dy*dy <= detection_radius*detection_radius):
+                cv2.polylines(image, [region_points], True, (0, 255, 0), thickness=4)
+                regions_status[idx] = 1
+                break
 
     status_string = ''.join(map(str, regions_status))
     print(f"Regions status: {status_string}")
@@ -131,5 +138,5 @@ def main():
 
     cv2.destroyAllWindows()
 
-if __name__ == '__main__':
+if __name__):
     main()

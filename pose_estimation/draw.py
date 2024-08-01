@@ -3,8 +3,8 @@ import numpy as np
 import json
 
 # 打开视频文件
-# cap = cv2.VideoCapture("Seeed1.mp4")
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture("Seeed1.mp4")
+#cap = cv2.VideoCapture(0)
 assert cap.isOpened(), "Error reading video file"
 
 # 读取视频的第一帧
