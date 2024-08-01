@@ -22,7 +22,7 @@ pipeline1 = Gst.parse_launch(
 )
 
 pipeline2 = Gst.parse_launch(
-    "v4l2src device=/dev/video1 ! "
+    "v4l2src device=/dev/video2 ! "
     "video/x-raw, format=(string)YUY2, width=640, height=480, framerate=30/1 ! "
     "videoconvert ! video/x-raw, format=(string)RGB ! appsink name=sink2 max-buffers=1 drop=true"
 )
@@ -146,7 +146,7 @@ def main():
                 image1 = cv2.cvtColor(sample1, cv2.COLOR_RGB2BGR)
                 
                 # 进行目标跟踪
-                results1 = model.track(image1, verbose=True, show=False)
+                results1 = model.track(image1, verbose=False, show=False)
                 mesh_data1 = results1[0].keypoints.data
 
                 # 绘制关键点和区域
@@ -158,7 +158,7 @@ def main():
                 image2 = cv2.cvtColor(sample2, cv2.COLOR_RGB2BGR)
                 
                 # 进行目标跟踪
-                results2 = model.track(image2, verbose=True, show=False)
+                results2 = model.track(image2, verbose=False, show=False)
                 mesh_data2 = results2[0].keypoints.data
 
                 # 绘制关键点和区域
