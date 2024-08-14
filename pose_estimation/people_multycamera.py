@@ -12,7 +12,7 @@ import socket
 Gst.init(None)
 
 # 初始化YOLO模型
-model = YOLO("yolov8n-pose.engine")
+model = YOLO("/home/nvidia/people/yolov8m-pose.engine")
 
 # 打开两个视频文件
 pipeline1 = Gst.parse_launch(
@@ -66,14 +66,14 @@ def new_sample(sink, data):
     return arr
 
 # 读取JSON文件中的区域坐标
-with open('regions.json', 'r') as f:
+with open('/home/nvidia/people/regions.json', 'r') as f:
     all_region_points1 = json.load(f)
 
-with open('regions1.json', 'r') as f:
+with open('/home/nvidia/people/regions1.json', 'r') as f:
     all_region_points2 = json.load(f)
 
-keypoints_check = [15, 16]  # 左右脚关键点
-detection_radius = 16  # 设置检测半径
+keypoints_check = [0,5,6,9,10,13,14,15,16]  # 左右脚关键点
+detection_radius = 20  # 设置检测半径
 
 # 设置TCP客户端
 TCP_IP = '127.0.0.1'  # TCP服务器的IP地址
@@ -146,7 +146,7 @@ def main():
                 image1 = cv2.cvtColor(sample1, cv2.COLOR_RGB2BGR)
                 
                 # 进行目标跟踪
-                results1 = model.track(image1, verbose=False, show=False)
+                results1 = model.track(image1, verbose=False, show=False,conf=0.3,iou=0.4,max_det=100)
                 mesh_data1 = results1[0].keypoints.data
 
                 # 绘制关键点和区域
@@ -158,7 +158,7 @@ def main():
                 image2 = cv2.cvtColor(sample2, cv2.COLOR_RGB2BGR)
                 
                 # 进行目标跟踪
-                results2 = model.track(image2, verbose=False, show=False)
+                results2 = model.track(image2, verbose=False, show=False,conf=0.3,iou=0.4,max_det=100)
                 mesh_data2 = results2[0].keypoints.data
 
                 # 绘制关键点和区域

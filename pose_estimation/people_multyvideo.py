@@ -5,20 +5,20 @@ from ultralytics import YOLO
 import socket
 
 # 初始化YOLO模型
-model = YOLO("yolov8n-pose.engine")
+model = YOLO("/home/nvidia/people/yolov8m-pose.engine")
 
 # 打开两个本地视频文件
-cap1 = cv2.VideoCapture('Seeed1.mp4')
-cap2 = cv2.VideoCapture('Seeed1.mp4')
+cap1 = cv2.VideoCapture('/home/nvidia/people/Seeed1.mp4')
+cap2 = cv2.VideoCapture('/home/nvidia/people/Seeed1.mp4')
 
 # 读取JSON文件中的区域坐标
-with open('regions.json', 'r') as f:
+with open('/home/nvidia/people/regions.json', 'r') as f:
     all_region_points1 = json.load(f)
 
-with open('regions1.json', 'r') as f:
+with open('/home/nvidia/people/regions1.json', 'r') as f:
     all_region_points2 = json.load(f)
 
-keypoints_check = [15, 16]  # 左右脚关键点
+keypoints_check =  [0,5,6,9,10,13,14,15,16]  # 左右脚关键点
 detection_radius = 16  # 设置检测半径
 
 # 设置TCP客户端
@@ -69,7 +69,7 @@ def main():
 
         if ret1:
             # 进行目标跟踪
-            results1 = model.track(frame1, verbose=False, show=False)
+            results1 = model.track(frame1, verbose=True, show=False)
             mesh_data1 = results1[0].keypoints.data
 
             # 绘制关键点和区域
@@ -79,7 +79,7 @@ def main():
         
         if ret2:
             # 进行目标跟踪
-            results2 = model.track(frame2, verbose=False, show=False)
+            results2 = model.track(frame2, verbose=True, show=False)
             mesh_data2 = results2[0].keypoints.data
 
             # 绘制关键点和区域

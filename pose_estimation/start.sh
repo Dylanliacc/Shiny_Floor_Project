@@ -1,3 +1,3 @@
 #!/bin/bash
-
-python3 /home/nvidia/people/peopletcp.py > /dev/null
+sleep 5
+python3 /home/nvidia/people/people_multycamera.py

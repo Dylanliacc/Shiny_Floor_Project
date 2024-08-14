@@ -11,6 +11,9 @@
 #include <iomanip>
 #include <ctime>
 
+#define DEBUG_FLAG
+#define DEBUG_NOT_CONNECTED
+
 int ai_fd = 0, other_fd = 0;
 int board[21], board_num = 0, board_max = 20;
 char last_buffer[30] = {0};
@@ -92,17 +95,97 @@ void distribute(const char *value, int num) {
     int flag = 0;
 
     for (int i = 0; i < num; ++i) {
-        if (board[i + 1] == 0) {
+        if (value[i] == last_buffer[i] ) {
             continue;
         }
-        if (value[i] == last_buffer[i] ) {
+        if (board[i + 1] == 0) {
+#ifdef DEBUG_NOT_CONNECTED
+            if (!flag) {
+                flag = 1;
+                printf("\n");
+            }
+            print_time();
+            printf("board %d (not exist): %c\n", i + 1, value[i]);
+#endif
             continue;
         }
 
         if (value[i] == '0') {
             write(board[i + 1], "off", 3);
         } else {
-            write(board[i + 1], "rainbow", 7);
+            srand(time(NULL));
+            char ch[] = "rgb 1 1 1";
+            int id = rand() % 6;
+
+            switch (id) {
+                case 0:
+                    ch[4] = 255;
+                    ch[6] = 0;
+                    ch[8] = 0;
+                    break;
+                case 1:
+                    ch[4] = 0;
+                    ch[6] = 255;
+                    ch[8] = 0;
+                    break;
+                case 2:
+                    ch[4] = 0;
+                    ch[6] = 0;
+                    ch[8] = 255;
+                    break;
+                case 3:
+                    ch[4] = 68;
+                    ch[6] = 206;
+                    ch[8] = 246;
+                    break;
+                case 4:
+                    ch[4] = 62;
+                    ch[6] = 237;
+                    ch[8] = 231;
+                    break;
+                case 5:
+                    ch[4] = 195;
+                    ch[6] = 39;
+                    ch[8] = 43;
+                    break;
+                default:
+                    ch[4] = 255;
+                    ch[6] = 255;
+                    ch[8] = 255;
+                    break;
+            }
+
+            printf("rgb %d %d %d\n", ch[4], ch[6], ch[8]);
+            id = i % 5;
+            switch(id) {
+                case 0:
+                    // ch[4] = rand() % 256;
+                    write(board[i + 1], ch, 9);
+                    write(board[i + 1], "constant", 8);
+                    break;
+                case 1:
+                    // ch[6] = rand() % 256;
+                    write(board[i + 1], ch, 9);
+                    write(board[i + 1], "breath", 6);
+                    break;
+                case 2:
+                    write(board[i + 1], "rainbow", 7);
+                    break;
+                case 3:
+                    // ch[4] = rand() % 256;
+                    write(board[i + 1], ch, 9);
+                    write(board[i + 1], "breath", 6);
+                    break;
+                case 4:
+                    // ch[6] = rand() % 256;
+                    write(board[i + 1], ch, 9);
+                    write(board[i + 1], "constant", 8);
+                    break;
+                default:
+                    write(board[i + 1], "rainbow", 7);
+            }
+            
+            // write(board[i + 1], "rainbow", 7);
         }
 
         if (!flag) {
@@ -110,9 +193,11 @@ void distribute(const char *value, int num) {
             printf("\n");
         }
 
+#ifdef DEBUG_FLAG
         print_time();
         // printf("%d -> %d: %c\n", i + 1, board[i + 1], value[i]);
         printf("board %d: %c\n", i + 1, value[i]);
+#endif
     }
 }
 
@@ -154,6 +239,7 @@ int main() {
     FD_SET(server_fd, &read_fds);
     max_fd = std::max(max_fd, server_fd);
 
+    srand(time(NULL));
     while (true) {
         FD_ZERO(&tmp_fds);
         tmp_fds = read_fds;
