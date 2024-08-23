@@ -11,23 +11,31 @@
 #include "driver/rmt_tx.h"
 #include "led_strip_encoder.h"
 
+
+#define BASE_1  178
+#define BASE_2  336
+#define BASE_3  240
+#define BASE_4  330
+#define BASE_UNDEFINE 1000
 #define RMT_LED_STRIP_RESOLUTION_HZ 10000000 // 10MHz resolution, 1 tick = 0.1us (led strip needs a high resolution)
 #define RMT_LED_STRIP_GPIO_NUM 9
 
-#define EXAMPLE_LED_NUMBERS 8
-#define EXAMPLE_CHASE_SPEED_MS 10
+#define EXAMPLE_LED_NUMBERS BASE_UNDEFINE
+#define EXAMPLE_CHASE_SPEED_MS 20
 
 // #define WIFI_SSID      "IAG_2.4G"
 
 #define Client_ID "2"
 
-#define WIFI_SSID "shiny_floor"
+#define WIFI_SSID "light"
 #define WIFI_PASS "12345678"
 #define MAX_RETRY 5
 
-#define SERVER_IP "192.168.214.210"
+#define SERVER_IP "192.168.31.200"
 #define SERVER_PORT 3333
 
+//#define DEBUG_RAINBOW // Define DEBUG for test version    
+//#define DEBUG_CONSISTANCE  //Defien DEBUG for con test
 static const char *TAG = "example";
 static int s_retry_num = 0;
 static EventGroupHandle_t s_wifi_event_group;
@@ -35,7 +43,7 @@ const int WIFI_CONNECTED_BIT = BIT0;
 
 static uint8_t led_strip_pixels[EXAMPLE_LED_NUMBERS * 3];
 static bool led_effect_on = false;
-static uint8_t rgb_color[3] = {255, 0, 0}; // Default color for RGB effects
+static uint8_t rgb_color[3] = {255, 255, 255}; // Default color for RGB effects
 
 typedef enum
 {
@@ -158,7 +166,7 @@ void tcp_client_task(void *pvParameters)
         char *message = "Connection successful";
         char *id = Client_ID; // Example Client_ID
         char result[100];     // Make sure this is large enough to hold the final string
-        //send(sock, message, strlen(message), 0);
+        // send(sock, message, strlen(message), 0);
         strcpy(result, id); // Concatenate the Client_ID
         send(sock, result, strlen(result), 0);
 
@@ -202,6 +210,7 @@ void tcp_client_task(void *pvParameters)
                 }
                 else if (sscanf(rx_buffer, "rgb %hhu %hhu %hhu", &rgb_color[0], &rgb_color[1], &rgb_color[2]) == 3)
                 {
+                    printf("recv rgb set cmd: %hhu %hhu %hhu", rgb_color[0], rgb_color[1], rgb_color[2]);
                     // Update RGB color for breathing and constant effects
                 }
             }
@@ -321,6 +330,40 @@ void led_effect_task(void *pvParameters)
     };
     while (1)
     {
+#ifdef DEBUG_CONSISTANCE
+        // If DEBUG is defined, make the LEDs constant green
+        for (int i = 0; i < EXAMPLE_LED_NUMBERS; i++)
+        {
+            // printf("shine++");
+            led_strip_pixels[i * 3 + 0] = 0;   // Red
+            led_strip_pixels[i * 3 + 1] = 255; // Green
+            led_strip_pixels[i * 3 + 2] = 0;   // Blue
+        }
+        ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
+        ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
+        vTaskDelay(pdMS_TO_TICKS(10)); // Prevent CPU overutilization
+#endif
+#ifdef DEBUG_RAINBOW
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = i; j < EXAMPLE_LED_NUMBERS; j += 3)
+            {
+                hue = j * 360 / EXAMPLE_LED_NUMBERS + start_rgb;
+                led_strip_hsv2rgb(hue, 100, 100, &red, &green, &blue);
+                led_strip_pixels[j * 3 + 0] = green;
+                led_strip_pixels[j * 3 + 1] = blue;
+                led_strip_pixels[j * 3 + 2] = red;
+            }
+            ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
+            ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
+            vTaskDelay(pdMS_TO_TICKS(EXAMPLE_CHASE_SPEED_MS));
+            memset(led_strip_pixels, 0, sizeof(led_strip_pixels));
+            ESP_ERROR_CHECK(rmt_transmit(led_chan, led_encoder, led_strip_pixels, sizeof(led_strip_pixels), &tx_config));
+            ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
+            vTaskDelay(pdMS_TO_TICKS(EXAMPLE_CHASE_SPEED_MS));
+        }
+        start_rgb += 60;
+#else
         if (led_effect_on)
         {
             switch (current_effect)
@@ -358,7 +401,7 @@ void led_effect_task(void *pvParameters)
                 ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
                 vTaskDelay(pdMS_TO_TICKS(20));
                 brightness = increasing ? brightness + 1 : brightness - 1;
-                if (brightness == 0 || brightness == 255)
+                if (brightness == 0 || brightness == 100)
                 {
                     increasing = !increasing;
                 }
@@ -394,5 +437,6 @@ void led_effect_task(void *pvParameters)
             ESP_ERROR_CHECK(rmt_tx_wait_all_done(led_chan, portMAX_DELAY));
             vTaskDelay(pdMS_TO_TICKS(100)); // Add a delay to prevent CPU overutilization
         }
+#endif
     }
 }
