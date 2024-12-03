@@ -1,0 +1,2 @@
+gnome-terminal -- bash -c "sh /home/nvidia/people/start.sh"
+gnome-terminal -- bash -c "sh /home/nvidia/people/server.sh; exec bash"

@@ -1,7 +1,7 @@
 import socket
 
 TCP_IP = '127.0.0.1'  # 本地IP地址
-TCP_PORT = 5005       # 监听端口
+TCP_PORT = 3333       # 监听端口
 BUFFER_SIZE = 1024    # 接收数据缓冲区大小
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
